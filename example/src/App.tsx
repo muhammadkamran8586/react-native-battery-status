@@ -1,12 +1,25 @@
+import { useState, useEffect } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import { multiply } from 'react-native-battery-status';
-
-const result = multiply(3, 7);
+import { getBatteryLevel } from 'react-native-battery-status';
 
 export default function App() {
+  const [batteryLevel, setBatteryLevel] = useState<number | undefined | null>(
+    null
+  );
+  useEffect(() => {
+    const fetchBatteryLevel = async () => {
+      try {
+        const level = await getBatteryLevel();
+        setBatteryLevel(level);
+      } catch (error) {
+        console.error('Error fetching battery level:', error);
+      }
+    };
+    fetchBatteryLevel();
+  }, []);
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Text>Result: {batteryLevel}</Text>
     </View>
   );
 }

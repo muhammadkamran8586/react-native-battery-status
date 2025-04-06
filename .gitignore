@@ -8,7 +8,7 @@
 # VSCode
 .vscode/
 jsconfig.json
-
+yarn.lock
 # Xcode
 #
 build/
@@ -84,3 +84,5 @@ android/generated
 
 # React Native Nitro Modules
 nitrogen/
+yarn.lock
+yarn.lock
