@@ -1,11 +1,10 @@
 package com.batterystatus
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
-import android.os.PowerManager
-import com.facebook.react.bridge.BridgeReactContext
 import com.facebook.react.bridge.BridgeReactContext.*
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -15,9 +14,18 @@ import com.facebook.react.module.annotations.ReactModule
 @ReactModule(name = BatteryStatusModule.NAME)
 class BatteryStatusModule(reactContext: ReactApplicationContext) :
   NativeBatteryStatusSpec(reactContext) {
+  var context: ReactApplicationContext = reactContext
+  val event = Event(context)
 
   override fun getName(): String {
     return NAME
+  }
+
+  init {
+    val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+    context.registerReceiver(BatteryLevelReceiver(context).batteryLevel, intentFilter)
+    context.registerReceiver(PowerSourceReceiver(context).powerSource, intentFilter)
+    context.registerReceiver(BatteryInfoReceiver(context).batteryInfo, intentFilter)
   }
 
   override fun getBatteryLevel(promise: Promise?) {
@@ -36,17 +44,6 @@ class BatteryStatusModule(reactContext: ReactApplicationContext) :
     TODO("Not yet implemented")
   }
 
-  init{
-
-
-  }
-
-
-  private fun sendEvent(eventName: String, params: WritableNativeMap) {
-    reactApplicationContext
-      .getJSModule(RCTDeviceEventEmitter::class.java)
-      .emit(eventName, params)
-  }
 
   companion object {
     const val NAME = "BatteryStatus"
